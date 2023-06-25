@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get('/',authController.index);
 
+router.post('/signup', authController.signup);
 
-
-
+router.get('/users',authController.getUsers )
 
 
 
