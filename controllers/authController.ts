@@ -131,9 +131,19 @@ const getUsers = async (req: Request, res: Response) => {
     return res.status(200).send({ result });
 }
 
+const logout = async (req: Request, res: Response) => {
+    req.logout((err) => {
+        if (err) {
+            return res.send(err);
+        }
+        res.redirect('/api');
+    })
+}
+
 export default {
     index,
     signup,
     getUsers,
-    login
+    login,
+    logout
 }
