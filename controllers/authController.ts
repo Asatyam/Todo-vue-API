@@ -56,7 +56,7 @@ const signup = [
             }
             try {
 
-               
+
                 const result = await prisma.user.create({
                     data: {
                         username: req.body.username,
@@ -98,6 +98,33 @@ const signup = [
     },
 ];
 
+const login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        passport.authenticate('local-login',
+            { session: false },
+            (err: Error, user: UserType, info: any) => {
+                if (err || !user) {
+                    return res.status(403).json({ info, err });
+                }
+                req.login(user, { session: false }, (err) => {
+                    if (err) {
+                        next(err);
+                    }
+                    const body = {
+                        id: user.id,
+                        username: user.username,
+                    };
+                    const token = jwt.sign({ user: body }, process.env.SECRET as any);
+                    return res.status(200).json({ body, token });
+                });
+            }
+        )(req, res, next);
+    } catch (err) {
+        return res.status(403).json({ err });
+    }
+}
+
+
 const getUsers = async (req: Request, res: Response) => {
 
     const result = await prisma.user.findMany({});
@@ -108,4 +135,5 @@ export default {
     index,
     signup,
     getUsers,
+    login
 }
