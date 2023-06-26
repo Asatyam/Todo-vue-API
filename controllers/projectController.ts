@@ -1,9 +1,20 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction, response } from "express"
 import { body, validationResult } from "express-validator";
 import { PrismaClient, Project } from '@prisma/client';
 import { ProjectType, UserType } from "../helpers/Types.js";
 const prisma = new PrismaClient();
 
+
+const projects = async (req: Request, res: Response) => {
+    try {
+        const currUser = req.user as UserType;
+        const projects = await prisma.project.findMany({ where: { userId: currUser.id } });
+
+        return res.status(200).json({ projects });
+    } catch (err) {
+        return res.status(404).json({ err });
+    }
+}
 
 const getProjectTodos = async (req: Request, res: Response) => {
     try {
@@ -12,7 +23,7 @@ const getProjectTodos = async (req: Request, res: Response) => {
         return res.status(200).send({ todos });
 
     } catch (err) {
-        return res.status(404).send({ err: 'Something went wrong' });
+        return res.status(404).send({ err });
     }
 }
 
@@ -41,22 +52,48 @@ const createProject = [
                         userId: currUser.id,
                     }
                 });
-                console.log(currUser, typeof newProject,'hello');
+                console.log(currUser, typeof newProject, 'hello');
                 return res.status(200).json({ message: 'Project created successfully', newProject });
             }
 
         } catch (err) {
-            return res.status(400).send({err});
+            return res.status(400).send({ err });
         }
     }
 ]
 
+const deleteProject = async (req: Request, res: Response) => {
 
+    try {
+
+        const projectid = Number(req.params.projectid);
+        const result = await prisma.project.delete({ where: { id: projectid } });
+        return res.status(200).json({ message: 'Project deleted' });
+
+    } catch (err) {
+        return res.status(404).json({ message: 'Project could not be deleted', err });
+    }
+}
+
+
+const updateProjectName = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.projectid);
+        const result = await prisma.project.update({ where: { id: id }, data: { name: req.body.name } });
+        return res.status(200).json({ message: 'Project name updated', result });
+
+    } catch (err) {
+        return res.status(404).json({ message: 'Something went wrong', err });
+    }
+}
 
 
 
 export default {
     getProjectTodos,
-    createProject
+    createProject,
+    deleteProject,
+    projects,
+    updateProjectName
 
 }

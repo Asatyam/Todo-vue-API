@@ -17,9 +17,14 @@ router.post('/logout', passport.authenticate('jwt', { session: false }), authCon
 router.get('/isAuth', passport.authenticate('jwt', { session: false }), (req, res) => res.send(req.user));
 
 // Project Routes
+router.get('/projects', passport.authenticate('jwt', { session: false }), projectController.projects);
 
-router.get('/projects/:projectid', passport.authenticate('jwt',{session:false}), projectController.getProjectTodos);
+router.get('/projects/:projectid', passport.authenticate('jwt', { session: false }), projectController.getProjectTodos);
 
-router.post('/project', passport.authenticate('jwt',{session:false}), projectController.createProject);
+router.post('/projects', passport.authenticate('jwt', { session: false }), projectController.createProject);
+
+router.delete('/projects/:projectid', passport.authenticate('jwt', { session: false }), projectController.deleteProject);
+
+router.patch('/projects/:projectid', passport.authenticate('jwt', { session: false }), projectController.updateProjectName);
 
 export default router;
