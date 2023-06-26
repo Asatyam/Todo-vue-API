@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import authController from "../controllers/authController.js";
 import projectController from '../controllers/projectController.js'
+import todoController from "../controllers/todoController.js";
 const router = express.Router();
 
 router.get('/', authController.index);
@@ -27,4 +28,13 @@ router.delete('/projects/:projectid', passport.authenticate('jwt', { session: fa
 
 router.patch('/projects/:projectid', passport.authenticate('jwt', { session: false }), projectController.updateProjectName);
 
+// Todo Routes
+
+router.get('/projects/:projectid/todos/:todoid', passport.authenticate('jwt', { session: false }), todoController.getTodo);
+
+router.post('/projects/:projectid/todos', passport.authenticate('jwt', { session: false }), todoController.createTodos);
+
+router.put('/projects/:projectid/todos/:todoid', passport.authenticate('jwt', { session: false }), todoController.updateTodos);
+
+router.delete('/projects/:projectid/todos/:todoid', passport.authenticate('jwt', { session: false }), todoController.deleteTodo);
 export default router;
