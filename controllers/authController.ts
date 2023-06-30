@@ -21,7 +21,6 @@ const signup = [
         .custom(async (value) => {
             const user = await prisma.user.findUnique({ where: { username: value } });
             if (user) {
-                console.log(user);
                 return Promise.reject(new Error('Username already taken'));
             }
             return true;

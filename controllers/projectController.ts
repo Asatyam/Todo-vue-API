@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 
 const projects = async (req: Request, res: Response) => {
     try {
-        const currUser = req.user as UserType;
+        const temp = req.user as any;
+        const currUser = temp.user as any;
         const projects = await prisma.project.findMany({ where: { userId: currUser.id } });
-
         return res.status(200).json({ projects });
     } catch (err) {
         return res.status(404).json({ err });
@@ -41,18 +41,14 @@ const createProject = [
         try {
 
             const alreadyExist = await prisma.project.findFirst({ where: { name: req.body.name } });
-            console.log(alreadyExist);
             if (!alreadyExist) {
-                console.log('hey');
-                const currUser = req.user as UserType;
-                console.log(currUser, 'hey');
+                const currUser = req.user as any;
                 const newProject = await prisma.project.create({
                     data: {
                         name: req.body.name,
-                        userId: currUser.id,
+                        userId: currUser.user.id,
                     }
                 });
-                console.log(currUser, typeof newProject, 'hello');
                 return res.status(200).json({ message: 'Project created successfully', newProject });
             }
 

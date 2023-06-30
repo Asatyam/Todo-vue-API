@@ -33,7 +33,6 @@ const createTodos = [
         }
         try {
             const projectid = Number(req.params.projectid);
-            console.log(typeof projectid);
             const result = await prisma.todo.create({
                 data: {
                     title: req.body.title,
@@ -71,7 +70,6 @@ const updateTodos = [
         try {
             const projectid = Number(req.params.projectid);
 
-            console.log(typeof projectid);
             const result = await prisma.todo.update({
                 where: {
                     id: Number(req.params.todoid),

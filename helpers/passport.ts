@@ -12,7 +12,6 @@ const prisma = new PrismaClient()
 export function setUpPassport(passport:any) {
 
     passport.serializeUser((user: any, done: any) => {
-        console.log('working');
         done(null, user.id);
     });
 
